@@ -1,6 +1,15 @@
 var casper = require('casper').create();
 var url = 'https://campus.concordia.ca/psc/pscsprd/EMPLOYEE/HRMS/c/CU_EXT.CU_CLASS_SEARCH.GBL';
 
+// Check for required arguments
+if(typeof casper.cli.options['semester'] !== 'string' && typeof casper.cli.options['semester'] !== 'number') {
+  casper.die(error('--semester must be either a string or a number'));
+}
+
+if(casper.cli.options['subject'] === undefined) {
+  casper.die(error('--subject is a required argument'));
+}
+
 casper.start(url);
 
 // Fill out the course search form
@@ -17,7 +26,7 @@ casper.thenEvaluate(function(semester, subject_code, course_code, course_number)
           break;
         }
       }
-    } else {
+    } else if(typeof semester === "number") {
       terms.value = semester;
     }
     addchg_win0(terms);
@@ -25,7 +34,8 @@ casper.thenEvaluate(function(semester, subject_code, course_code, course_number)
     var career = document.getElementById('SSR_CLSRCH_WRK_ACAD_CAREER$0');
     career.value = 'UGRD';
     addchg_win0(career);
-  
+    
+    
     var subject = document.getElementById('SSR_CLSRCH_WRK_SUBJECT$1');
     subject.value = subject_code;
     addchg_win0(subject);
@@ -96,11 +106,9 @@ casper.waitFor(function check() {
   courses['status'] = 'success';
   this.echo(JSON.stringify(courses, null, '\t'));
 }, function timeout() {
-  // We timed out
-  this.echo(JSON.stringify({
-    'status': 'error',
-    'message': 'Failed to load class list'
-  }, null, '\t'));
+  var error_message = this.getHTML('span#DERIVED_CLSMSG_ERROR_TEXT');
+  
+  this.echo(error(error_message || 'Failed to load class list'));
 }, 5000);
 
 // Click the link to get details about a section
@@ -122,3 +130,10 @@ casper.waitFor(function check() {
 // });
 
 casper.run();
+
+function error(message) {
+  return JSON.stringify({
+    'status': 'error',
+    'message': message
+  }, null, '\t');
+}
