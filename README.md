@@ -13,6 +13,9 @@ The scraper requires CasperJS. It's tested to work with CasperJS 1.1.1 and Phant
 `--number` is the class number that uniquely identifies a section. Also optional
 
 # Output
+More or less outputs the data exactly how you'd find it on Concordia's site.
+
+The only computed attribute for each `section` is `status`, which is one of: `open`, `waitlist`, `closed`.
 
 ```json
 {
