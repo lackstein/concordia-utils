@@ -1,3 +1,5 @@
+Scrapes Concordia's publicly accessible [course scheduling system](https://campus.concordia.ca/psc/pscsprd/EMPLOYEE/HRMS/c/CU_EXT.CU_CLASS_SEARCH.GBL) and outputs information about each section in JSON.
+
 # Installation
 The scraper requires CasperJS. It's tested to work with CasperJS 1.1.1 and PhantomJS 2.1.1.
 
